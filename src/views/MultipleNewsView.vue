@@ -1,8 +1,8 @@
 <template>
     <div class="news-list">
         <h1>Multiple News Sources</h1>
-        <div v-for="source in sources" :key="source.url" class="news-source">
-            <h2>{{ getDomainName(source.url) }}</h2>
+        <div v-for="source in sources.sources" :key="source.url" class="news-source">
+            <h2>{{ source.url }}</h2>
             <ul>
                 <li v-for="article in source.articles" :key="article.url">
                     <a :href="article.url" target="_blank">{{ article.title }}</a>
@@ -13,22 +13,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue'
-import axios from 'axios'
-import type { Source } from '@/types/source'
+import { defineComponent, onMounted } from 'vue'
+import { useMultipleNewsStore } from '@/stores/multipleNews'
 
 export default defineComponent({
     name: 'MultipleNewsView',
     setup() {
-        const sources = ref<Source[]>([])
+        const sources = useMultipleNewsStore()
 
         onMounted(async () => {
-            try {
-                const response = await axios.get('http://localhost:3000/api/multiple-news')
-                sources.value = response.data
-            } catch (error) {
-                console.error('Lỗi:', error)
-            }
+            sources.fetchSources()
         })
 
         const getDomainName = (url: string) => {

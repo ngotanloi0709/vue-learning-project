@@ -1,6 +1,6 @@
 import express from 'express'
 import cors from 'cors'
-import { fetchNews } from './fetchVnexpressNews.js'
+import { fetchVnexpressNews } from './fetchVnexpressNews.js'
 import { fetchMultipleNews } from './fetchMultipleNews.js'
 
 const app = express()
@@ -8,7 +8,7 @@ app.use(cors())
 
 app.get('/api/news', async (req, res) => {
     try {
-        const articles = await fetchNews()
+        const articles = await fetchVnexpressNews()
         res.json(articles)
     } catch (error) {
         console.error(error)

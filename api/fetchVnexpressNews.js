@@ -1,43 +1,16 @@
-import chromium from '@sparticuz/chromium-min'
-import puppeteerCore from 'puppeteer-core'
-
-export const dynamic = 'force-dynamic'
-const remoteExecutablePath =
-    'https://github.com/Sparticuz/chromium/releases/download/v121.0.0/chromium-v121.0.0-pack.tar'
+import { launchBrowser, createOptimizedPage, fetchArticlesFromPage } from './puppeteerLauncher.js'
 
 export default async function handler(req, res) {
-    if (req.method !== 'GET') {
-        return res.status(405).json({ error: 'Method not allowed' })
-    }
-
     try {
-        const browser = await puppeteerCore.launch({
-            args: chromium.args,
-            executablePath: await chromium.executablePath(remoteExecutablePath),
-            headless: true,
-        })
-
-        const page = await browser.newPage()
-
-        await page.setRequestInterception(true)
-        page.on('request', (req) => {
-            if (['image', 'stylesheet', 'font', 'media'].includes(req.resourceType())) {
-                req.abort()
-            } else {
-                req.continue()
-            }
-        })
-
-        await page.goto('https://vnexpress.net/', { waitUntil: 'domcontentloaded', timeout: 60000 })
-
-        const articles = await page.evaluate(() => {
-            return Array.from(document.querySelectorAll('.title-news a')).map((el) => ({
-                title: el.innerText.trim(),
-                url: el.href,
-            }))
-        })
+        const browser = await launchBrowser()
+        const page = await createOptimizedPage(browser)
+        const articles = await fetchArticlesFromPage(page, 'https://vnexpress.net/', '.title-news a')
 
         await browser.close()
+
+        res.setHeader('Access-Control-Allow-Origin', '*')
+        res.setHeader('Access-Control-Allow-Methods', 'GET')
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
 
         return res.status(200).json(articles)
     } catch (error) {

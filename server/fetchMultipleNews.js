@@ -1,52 +1,28 @@
-import { launch } from 'puppeteer'
+import { launchBrowser, createOptimizedPage, fetchArticlesFromPage } from './puppeteerService.js'
 
 const fetchFromSite = async (browser, url, selector) => {
-    const startTime = Date.now()
-    console.log(`Fetching from ${url} started at ${new Date(startTime).toISOString()}`)
+    try {
+        const page = await createOptimizedPage(browser)
+        const articles = await fetchArticlesFromPage(page, url, selector)
+        await page.close()
 
-    const page = await browser.newPage()
+        return { articles, error: null }
+    } catch (error) {
+        console.error(`Lỗi khi lấy dữ liệu từ ${url}:`, error.message)
 
-    await page.setRequestInterception(true)
-    page.on('request', (req) => {
-        if (['image', 'stylesheet', 'font', 'media', 'script'].includes(req.resourceType())) {
-            req.abort()
-        } else {
-            req.continue()
-        }
-    })
-
-    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 })
-
-    const articles = await page.evaluate((selector) => {
-        return Array.from(document.querySelectorAll(selector))
-            .slice(0, 10)
-            .map((el) => ({
-                title: el.innerText.trim(),
-                url: el.href,
-            }))
-    }, selector)
-
-    await page.close()
-
-    const endTime = Date.now()
-    console.log(`Fetching from ${url} finished at ${new Date(endTime).toISOString()}`)
-    console.log(`Time taken for ${url}: ${(endTime - startTime) / 1000} seconds`)
-
-    return articles
+        return { articles: [], error: error.message }
+    }
 }
 
 export const fetchMultipleNews = async () => {
-    const browser = await launch({
-        headless: 'new',
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    })
+    const browser = await launchBrowser()
 
     const sources = [
+        { url: 'https://soha/', selector: '.box-category-content h3 a' },
         { url: 'https://vnexpress.net/', selector: '.title-news a' },
         { url: 'https://dantri.com.vn/', selector: '.article-title a' },
-        { url: 'https://baomoi.com', selector: '.bm-section h3 a'},
+        { url: 'https://baomoi.com', selector: '.bm-section h3 a' },
         { url: 'https://zingnews.vn/', selector: '.article-title a' },
-        { url: 'https://soha.vn', selector: '.box-category-content h3 a' },
     ]
 
     const results = await Promise.all(
@@ -55,8 +31,9 @@ export const fetchMultipleNews = async () => {
 
     await browser.close()
 
-    return results.map((articles, index) => ({
-        source: sources[index].url,
-        articles,
+    return results.map((result, index) => ({
+        url: sources[index].url,
+        articles: result.articles,
+        error: result.error,
     }))
 }
