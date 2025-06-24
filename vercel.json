@@ -1,0 +1,10 @@
+{
+    "installCommand": "npm install --force",
+    "version": 2,
+    "builds": [
+        {
+            "src": "api/*.js",
+            "use": "@vercel/node"
+        }
+    ]
+}
