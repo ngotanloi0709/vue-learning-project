@@ -1,8 +1,8 @@
-import { launchBrowser, createOptimizedPage, fetchArticlesFromPage } from './puppeteerLauncher.js'
+import { launchBrowser, createOptimizedPage, fetchArticlesFromPage } from '../server/puppeteerService.js'
 
 export default async function handler(req, res) {
     try {
-        const browser = await launchBrowser()
+        const browser = await launchBrowser(true)
         const page = await createOptimizedPage(browser)
         const articles = await fetchArticlesFromPage(page, 'https://vnexpress.net/', '.title-news a')
 

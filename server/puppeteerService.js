@@ -43,10 +43,12 @@ export const fetchArticlesFromPage = async (page, url, selector) => {
     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 })
 
     const articles = await page.evaluate((selector) => {
-        return Array.from(document.querySelectorAll(selector)).map((el) => ({
-            title: el.innerText.trim(),
-            url: el.href,
-        }))
+        return Array.from(document.querySelectorAll(selector))
+            .slice(0, 10)
+            .map((el) => ({
+                title: el.innerText.trim(),
+                url: el.href,
+            }))
     }, selector)
 
     const endTime = Date.now()

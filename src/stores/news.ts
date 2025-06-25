@@ -9,8 +9,8 @@ export const useNewsStore = defineStore('news', {
     actions: {
         async fetchNews() {
             try {
-                // const response = await axios.get('http://localhost:3000/api/news');
-                const response = await axios.get('https://vue-learning-project-two.vercel.app/api/fetchVnexpressNews.js');
+                const response = await axios.get('http://localhost:3000/api/news');
+                // const response = await axios.get('https://vue-learning-project-two.vercel.app/api/fetchVnexpressNews.js');
                 this.articles = response.data;
             } catch (error) {
                 console.error('Lỗi:', error);

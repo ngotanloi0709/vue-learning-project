@@ -32,6 +32,11 @@ const router = createRouter({
             name: 'multiple-news',
             component: () => import('../views/MultipleNewsView.vue'),
         },
+        {
+            path: '/head-info',
+            name: 'head-info',
+            component: () => import('../views/HeadInfo.vue'),
+        },
     ],
 })
 
