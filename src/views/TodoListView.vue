@@ -1,21 +1,25 @@
 <template>
-    <div class="todo-list-container">
-        <h1 class="title">Todo List</h1>
-        <TodoInput @add="addTodo" />
-        <ul class="todo-list">
-            <TodoItem
-                v-for="todo in todos"
-                :key="todo.id"
-                :todo="todo"
-                @toggle="toggleTodo"
-                @delete="deleteTodo"
-            />
-        </ul>
-    </div>
+    <v-container class="todo-list-container">
+        <v-card>
+            <v-card-title class="title">Todo List</v-card-title>
+            <v-card-text>
+                <transition-group name="fade" tag="v-list">
+                    <TodoInput @add="addTodo" />
+                    <TodoItem
+                        v-for="todo in sortedTodos"
+                        :key="todo.id"
+                        :todo="todo"
+                        @toggle="toggleTodo"
+                        @delete="deleteTodo"
+                    />
+                </transition-group>
+            </v-card-text>
+        </v-card>
+    </v-container>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue'
+import { defineComponent, reactive, computed } from 'vue'
 import TodoInput from '@/components/Todo/TodoInput.vue'
 import TodoItem from '@/components/Todo/TodoItem.vue'
 import type { Todo } from '@/types/todo'
@@ -42,7 +46,9 @@ export default defineComponent({
 
         const toggleTodo = (id: number) => {
             const todo = todos.find((t) => t.id === id)
-            if (todo) todo.completed = !todo.completed
+            if (todo) {
+                todo.completed = !todo.completed
+            }
         }
 
         const deleteTodo = (id: number) => {
@@ -50,7 +56,25 @@ export default defineComponent({
             if (index !== -1) todos.splice(index, 1)
         }
 
-        return { todos, addTodo, toggleTodo, deleteTodo }
+        const sortedTodos = computed(() => {
+            // Find the index of the last uncompleted task
+            const lastUncompletedIdx = [...todos].reduce((lastIdx, todo, idx) => {
+          return !todo.completed ? idx : lastIdx
+            }, -1)
+
+            // Separate uncompleted and completed todos
+            const uncompleted = todos.filter(todo => !todo.completed)
+            const completed = todos.filter(todo => todo.completed)
+
+            // Insert completed todos right after the last uncompleted todo
+            return [
+          ...uncompleted,
+          ...completed
+            ]
+        })
+        
+
+        return { todos, addTodo, toggleTodo, deleteTodo, sortedTodos }
     },
 })
 </script>
@@ -60,21 +84,16 @@ export default defineComponent({
     max-width: 600px;
     margin: 0 auto;
     padding: 20px;
-    background-color: #212121;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.title {
-    text-align: center;
-    font-size: 2rem;
-    /* color: #333; */
-    margin-bottom: 20px;
+.fade-enter-active,
+.fade-leave-active {
+    transition: all 0.5s ease;
 }
 
-.todo-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+    transform: translateY(-10px);
 }
 </style>

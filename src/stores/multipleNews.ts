@@ -5,14 +5,19 @@ import { defineStore } from 'pinia'
 export const useMultipleNewsStore = defineStore('multipleNews', {
     state: () => ({
         sources: [] as Source[],
+        loading: false,
     }),
     actions: {
         async fetchSources() {
+            this.loading = true
+
             try {
                 const response = await axios.get('http://localhost:3000/api/multiple-news')
                 this.sources = response.data
             } catch (error) {
                 console.error('Lỗi:', error)
+            } finally {
+                this.loading = false
             }
         },
     },

@@ -1,41 +1,31 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import TodoListView from '../views/TodoListView.vue'
+import NewsView from '../views/NewsView.vue'
+import MultipleNewsView from '../views/MultipleNewsView.vue'
+import HeadInfo from '../views/HeadInfo.vue'
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
-            path: '/',
-            name: 'home',
-            component: HomeView,
-        },
-        {
-            path: '/about',
-            name: 'about',
-            // route level code-splitting
-            // this generates a separate chunk (About.[hash].js) for this route
-            // which is lazy-loaded when the route is visited.
-            component: () => import('../views/AboutView.vue'),
-        },
-        {
             path: '/todos',
             name: 'todos',
-            component: () => import('../views/TodoListView.vue'),
+            component: TodoListView,
         },
         {
             path: '/news',
             name: 'news',
-            component: () => import('../views/NewsView.vue'),
+            component: NewsView,
         },
         {
             path: '/multiple-news',
             name: 'multiple-news',
-            component: () => import('../views/MultipleNewsView.vue'),
+            component: MultipleNewsView,
         },
         {
             path: '/head-info',
             name: 'head-info',
-            component: () => import('../views/HeadInfo.vue'),
+            component: HeadInfo,
         },
     ],
 })

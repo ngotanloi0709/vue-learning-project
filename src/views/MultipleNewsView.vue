@@ -1,15 +1,30 @@
 <template>
-    <div class="news-list">
-        <h1>Multiple News Sources</h1>
-        <div v-for="source in sources.sources" :key="source.url" class="news-source">
-            <h2>{{ source.url }}</h2>
-            <ul>
-                <li v-for="article in source.articles" :key="article.url">
-                    <a :href="article.url" target="_blank">{{ article.title }}</a>
-                </li>
-            </ul>
-        </div>
-    </div>
+    <v-container class="news-list">
+        <v-card>
+            <v-card-title>Multiple News Sources</v-card-title>
+            <v-card-text>
+                <v-progress-linear v-if="sources.loading" indeterminate color="primary" />
+                <v-expansion-panels v-else>
+                    <v-expansion-panel v-for="source in sources.sources" :key="source.url">
+                        <v-expansion-panel-title>{{ source.url }}</v-expansion-panel-title>
+                        <v-expansion-panel-text>
+                            <v-list>
+                                <v-list-item v-for="article in source.articles" :key="article.url">
+                                    <v-list-item-content>
+                                        <v-list-item-title>
+                                            <a :href="article.url" target="_blank">{{
+                                                article.title
+                                            }}</a>
+                                        </v-list-item-title>
+                                    </v-list-item-content>
+                                </v-list-item>
+                            </v-list>
+                        </v-expansion-panel-text>
+                    </v-expansion-panel>
+                </v-expansion-panels>
+            </v-card-text>
+        </v-card>
+    </v-container>
 </template>
 
 <script lang="ts">
@@ -37,47 +52,3 @@ export default defineComponent({
     },
 })
 </script>
-
-<style scoped>
-.news-list {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #212121;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.news-list h1 {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.news-source {
-    margin-bottom: 30px;
-}
-
-.news-source h2 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-    color: #007bff;
-}
-
-.news-source ul {
-    list-style: none;
-    padding: 0;
-}
-
-.news-source li {
-    margin-bottom: 10px;
-}
-
-.news-source a {
-    text-decoration: none;
-    color: #fff;
-}
-
-.news-source a:hover {
-    text-decoration: underline;
-}
-</style>

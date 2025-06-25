@@ -1,12 +1,21 @@
 <template>
-    <div class="news-list">
-        <h1>VnExpress News</h1>
-        <ul>
-            <li v-for="article in newsStore.articles" :key="article.url">
-                <a :href="article.url" target="_blank">{{ article.title }}</a>
-            </li>
-        </ul>
-    </div>
+    <v-container class="news-list">
+        <v-card>
+            <v-card-title>VnExpress News</v-card-title>
+            <v-card-text>
+                <v-progress-linear v-if="newsStore.loading" indeterminate color="primary" />
+                <v-list v-else>
+                    <v-list-item v-for="article in newsStore.articles" :key="article.url">
+                        <v-list-item-content>
+                            <v-list-item-title>
+                                <a :href="article.url" target="_blank">{{ article.title }}</a>
+                            </v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+                </v-list>
+            </v-card-text>
+        </v-card>
+    </v-container>
 </template>
 
 <script lang="ts">

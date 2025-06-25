@@ -1,17 +1,17 @@
 import { launchBrowser, createOptimizedPage, fetchArticlesFromPage } from './puppeteerService.js'
 
 const fetchFromSite = async (browser, url, selector) => {
-    try {
-        const page = await createOptimizedPage(browser)
-        const articles = await fetchArticlesFromPage(page, url, selector)
-        await page.close()
+    // try {
+    const page = await createOptimizedPage(browser)
+    const articles = await fetchArticlesFromPage(page, url, selector)
+    await page.close()
 
-        return { articles, error: null }
-    } catch (error) {
-        console.error(`Lỗi khi lấy dữ liệu từ ${url}:`, error.message)
+    return { articles, error: null }
+    // } catch (error) {
+    //     console.error(`Lỗi khi lấy dữ liệu từ ${url}:`, error.message)
 
-        return { articles: [], error: error.message }
-    }
+    //     return { articles: [], error: error.message }
+    // }
 }
 
 export const fetchMultipleNews = async () => {
@@ -25,13 +25,26 @@ export const fetchMultipleNews = async () => {
         { url: 'https://zingnews.vn/', selector: '.article-title a' },
     ]
 
-    const results = await Promise.all(
+    // const results = await Promise.all(
+    //     sources.map((source) => fetchFromSite(browser, source.url, source.selector)),
+    // )
+
+    const results = await Promise.allSettled(
         sources.map((source) => fetchFromSite(browser, source.url, source.selector)),
     )
 
+    // Cách khác để không bị crash ngoài try catch
+    const normalizedResults = results.map((result) => {
+        if (result.status === 'fulfilled') {
+            return result.value
+        } else {
+            return { articles: [], error: result.reason?.message || String(result.reason) }
+        }
+    })
+
     await browser.close()
 
-    return results.map((result, index) => ({
+    return normalizedResults.map((result, index) => ({
         url: sources[index].url,
         articles: result.articles,
         error: result.error,

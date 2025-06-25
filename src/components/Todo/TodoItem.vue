@@ -1,11 +1,13 @@
 <template>
-    <li class="todo-item">
-        <span :class="{ completed: todo.completed }">{{ todo.text }}</span>
-        <div class="actions">
-            <button class="toggle-button" @click="$emit('toggle', todo.id)">✔</button>
-            <button class="delete-button" @click="$emit('delete', todo.id)">❌</button>
-        </div>
-    </li>
+    <v-list-item>
+        <v-list-item-title class="d-flex align-center justify-space-between">
+            <span :class="{ completed: todo.completed }">{{ todo.text }}</span>
+            <div>
+                <v-btn :disabled="todo.completed" size="small" icon color="success" @click="$emit('toggle', todo.id)">✔</v-btn>
+                <v-btn size="small" icon color="error" @click="$emit('delete', todo.id)">✖</v-btn>
+            </div>
+        </v-list-item-title>
+    </v-list-item>
 </template>
 
 <script lang="ts">
@@ -25,53 +27,17 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.todo-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-}
-
-.todo-item:last-child {
-    border-bottom: none;
-}
-
 .completed {
     text-decoration: line-through;
     color: gray;
 }
 
-.actions {
-    display: flex;
-    gap: 10px;
+:deep(.v-btn) {
+    margin-left: 8px;
 }
 
-.toggle-button,
-.delete-button {
-    padding: 5px 10px;
-    font-size: 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.toggle-button {
-    background-color: #28a745;
-    color: #fff;
-}
-
-.toggle-button:hover {
-    background-color: #218838;
-}
-
-.delete-button {
-    background-color: #dc3545;
-    color: #fff;
-}
-
-.delete-button:hover {
-    background-color: #c82333;
+:deep(.v-list-item-title) {
+    padding: 8px 16px;
+    border-bottom: 1px solid #e0e0e0;
 }
 </style>
