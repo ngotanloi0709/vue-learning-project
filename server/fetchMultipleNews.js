@@ -29,11 +29,11 @@ export const fetchMultipleNews = async () => {
     //     sources.map((source) => fetchFromSite(browser, source.url, source.selector)),
     // )
 
+    // Cách khác để không bị crash ngoài try catch
     const results = await Promise.allSettled(
         sources.map((source) => fetchFromSite(browser, source.url, source.selector)),
     )
 
-    // Cách khác để không bị crash ngoài try catch
     const normalizedResults = results.map((result) => {
         if (result.status === 'fulfilled') {
             return result.value

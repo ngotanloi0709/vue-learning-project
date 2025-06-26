@@ -57,22 +57,11 @@ export default defineComponent({
         }
 
         const sortedTodos = computed(() => {
-            // Find the index of the last uncompleted task
-            const lastUncompletedIdx = [...todos].reduce((lastIdx, todo, idx) => {
-          return !todo.completed ? idx : lastIdx
-            }, -1)
-
-            // Separate uncompleted and completed todos
-            const uncompleted = todos.filter(todo => !todo.completed)
-            const completed = todos.filter(todo => todo.completed)
-
-            // Insert completed todos right after the last uncompleted todo
-            return [
-          ...uncompleted,
-          ...completed
-            ]
+            return [...todos].sort((a, b) => {
+                if (a.completed === b.completed) return 0
+                return a.completed ? 1 : -1
+            })
         })
-        
 
         return { todos, addTodo, toggleTodo, deleteTodo, sortedTodos }
     },
