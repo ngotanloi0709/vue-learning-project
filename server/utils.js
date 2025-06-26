@@ -14,3 +14,13 @@ export const getLocalDateTimeString = () => {
         ('0' + m.getSeconds()).slice(-2)
     )
 }
+
+export const isValidUrl = (url) => {
+    try {
+        new URL(url)
+        return true
+    } catch (error) {
+        console.error('URL không hợp lệ:', url, ' lỗi:', error.message)
+        return false
+    }
+}

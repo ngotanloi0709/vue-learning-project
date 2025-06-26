@@ -12,11 +12,13 @@ export const launchBrowser = async (isProduction) => {
             args: chromium.args,
             executablePath: await chromium.executablePath(remoteExecutablePath),
             headless: true,
+            ignoreHTTPSErrors: true,
         })
     } else {
         return puppeteer.launch({
             headless: 'new',
-            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-http2'],
+            ignoreHTTPSErrors: true,
         })
     }
 }
@@ -40,7 +42,7 @@ export const fetchArticlesFromPage = async (page, url, selector) => {
     const startTime = Date.now()
     console.log(`Bắt đầu lấy bài báo từ ${url} lúc ${getLocalDateTimeString(startTime)}`)
 
-    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 })
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 })
 
     const articles = await page.evaluate((selector) => {
         return Array.from(document.querySelectorAll(selector))

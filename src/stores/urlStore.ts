@@ -7,27 +7,89 @@ export const useUrlStore = defineStore('urlStore', {
         urls: [] as UrlItem[],
     }),
     actions: {
-        async addUrl(url: string) {
-            const id = Date.now()
-            this.urls.push({ id, url, status: 'pending', data: null, error: null })
+        async fetchUrlHead(url: string, id: number) {
+            const index = this.urls.findIndex((item) => item.id === id)
 
             try {
                 const response = await axios.post('http://localhost:3000/api/extract-head', { url })
-                const index = this.urls.findIndex((item) => item.id === id)
 
-                if (index !== -1) {
-                    this.urls[index].status = 'success'
-                    this.urls[index].data = response.data
-                }
+                this.updateUrlItem(index, {
+                    status: 'success',
+                    data: response.data,
+                    error: null,
+                })
             } catch (error) {
-                const index = this.urls.findIndex((item) => item.id === id)
-
-                if (index !== -1) {
-                    this.urls[index].status = 'error'
-                    this.urls[index].error =
-                        error.response?.data?.message || error.message || String(error)
-                }
+                this.updateUrlItem(index, {
+                    status: 'error',
+                    data: null,
+                    error: error?.response?.data?.error || 'Lỗi không xác định',
+                })
             }
+        },
+        async fetchMultipleUrls(urls: string[]) {
+            try {
+                const response = await fetch('http://localhost:3000/api/extract-head-batch', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ urls }),
+                })
+
+                const reader = response.body.getReader()
+                const decoder = new TextDecoder('utf-8')
+
+                let done = false
+                while (!done) {
+                    const { value, done: streamDone } = await reader.read()
+                    done = streamDone
+
+                    if (value) {
+                        const chunk = decoder.decode(value)
+                        const batchResults = JSON.parse(chunk.trim())
+
+                        batchResults.forEach((result: UrlItem) => {
+                            const index = this.urls.findIndex((item) => item.url === result.url)
+                            if (index !== -1) {
+                                this.updateUrlItem(index, {
+                                    status: result.status,
+                                    data: result.data,
+                                    error: result.error,
+                                })
+                            }
+                        })
+                    }
+                }
+
+            } catch (error) {
+                console.error('Lỗi khi xử lý danh sách URL:', error)
+            }
+        },
+        updateUrlItem(index: number, updates: Partial<UrlItem>) {
+            if (index !== -1) {
+                this.urls[index] = { ...this.urls[index], ...updates }
+            }
+        },
+        addUrl(url: string) {
+            const id = Date.now()
+            this.urls.push({
+                id: id,
+                url: url,
+                status: 'pending',
+                data: null,
+                error: null,
+            })
+
+            return id
+        },
+        pushSingleUrl(url: string) {
+            const id = this.addUrl(url)
+            this.fetchUrlHead(url, id)
+        },
+        pushMultipleUrls(urls: string[]) {
+            urls.forEach((url) => {
+                this.addUrl(url)
+            })
+
+            this.fetchMultipleUrls(urls)
         },
     },
 })

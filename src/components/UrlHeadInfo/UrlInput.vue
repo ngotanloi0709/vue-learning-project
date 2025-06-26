@@ -1,7 +1,19 @@
 <template>
-    <div class="url-input-container">
-        <input v-model="url" placeholder="Enter URL" @keyup.enter="submitUrl" />
-        <button @click="submitUrl">Submit</button>
+    <div class="d-flex justify-space-between">
+        <v-text-field v-model="url" placeholder="Nhập URL" @keyup.enter="submitUrl" />
+        <div class="mt-3 mx-3">
+            <v-btn @click="submitUrl" color="blue-lighten-3">Submit</v-btn>
+            <v-btn class="ms-1" @click="submitCsv" color="grey-lighten-1">
+                <label for="csv-upload">Upload CSV</label>
+                <input
+                    id="csv-upload"
+                    type="file"
+                    accept=".csv"
+                    @change="submitCsv"
+                    style="display: none"
+                />
+            </v-btn>
+        </div>
     </div>
 </template>
 
@@ -16,44 +28,37 @@ export default defineComponent({
         const urlStore = useUrlStore()
 
         const submitUrl = () => {
-            if (url.value.trim()) {
-                urlStore.addUrl(url.value.trim())
+            const trimmedUrl = url.value.trim()
+
+            if (trimmedUrl) {
+                urlStore.pushSingleUrl(trimmedUrl)
                 url.value = ''
             }
         }
 
-        return { url, submitUrl }
+        const submitCsv = (event: Event) => {
+            const fileInput = event.target as HTMLInputElement
+            const file = fileInput.files?.[0]
+
+            if (!file) return
+
+            const reader = new FileReader()
+            reader.onload = (e) => {
+                const content = e.target?.result as string
+                const urls = content
+                    .split('\n')
+                    .map((line) => line.trim())
+                    .filter((line) => line)
+                urlStore.pushMultipleUrls(urls)
+            }
+            reader.readAsText(file)
+
+            // erase
+            fileInput.value = ''
+            fileInput.files = null
+        }
+
+        return { url, submitUrl, submitCsv }
     },
 })
 </script>
-
-<style scoped>
-.url-input-container {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-input {
-    flex: 1;
-    padding: 10px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-button {
-    padding: 10px 20px;
-    font-size: 1rem;
-    color: #fff;
-    background-color: #007bff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-</style>
