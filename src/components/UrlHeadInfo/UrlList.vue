@@ -1,39 +1,76 @@
 <template>
-    <ul class="url-list">
-        <li v-for="item in urlStore.urls" :key="item.id" :class="item.status">
-            <p><strong>URL:</strong> {{ item.url }}</p>
-            <p v-if="item.status === 'pending'">Status: Pending...</p>
-            <p v-else-if="item.status === 'success'">
-                <strong>Title:</strong> {{ item.data?.title || 'No title' }}
-                <!-- <ul class="meta-tags">
-                    <li v-for="(meta, index) in item.data?.metaTags" :key="index">
-                        <strong>{{ meta.name || 'Unnamed' }}:</strong> {{ meta.content || 'No content' }}
+    <v-container>
+        <v-row>
+            <v-col cols="12" md="4">
+                <h3>Pending</h3>
+                <transition-group name="fade" tag="ul" class="url-list">
+                    <li v-for="item in sortedUrls.pending" :key="item.id" class="pending">
+                        <p><strong>URL:</strong> {{ item.url }}</p>
+                        <p>Status: Pending...</p>
                     </li>
-                </ul> -->
-            </p>
-            <p v-else-if="item.status === 'error'">
-                <strong>Error:</strong> {{ item.error }}
-            </p>
-        </li>
-    </ul>
+                </transition-group>
+            </v-col>
+
+            <v-col cols="12" md="4">
+                <h3>Success</h3>
+                <transition-group name="fade" tag="ul" class="url-list">
+                    <li v-for="item in sortedUrls.success" :key="item.id" class="success">
+                        <p><strong>URL:</strong> {{ item.url }}</p>
+                        <p><strong>Title:</strong> {{ item.data?.title || 'Không có title' }}</p>
+                    </li>
+                </transition-group>
+            </v-col>
+
+            <v-col cols="12" md="4">
+                <h3>Error</h3>
+                <transition-group name="fade" tag="ul" class="url-list">
+                    <li v-for="item in sortedUrls.error" :key="item.id" class="error">
+                        <p><strong>URL:</strong> {{ item.url }}</p>
+                        <p><strong>Error:</strong> {{ item.error || 'Lỗi không xác định' }}</p>
+                    </li>
+                </transition-group>
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, computed } from 'vue'
 import { useUrlStore } from '@/stores/urlStore'
 
 export default defineComponent({
     name: 'UrlList',
     setup() {
         const urlStore = useUrlStore()
-        return { urlStore }
+
+        const sortedUrls = computed(() => {
+            const pending = urlStore.urls
+                .filter((item) => item.status === 'pending')
+                .sort((a, b) => b.id - a.id)
+            const success = urlStore.urls
+                .filter((item) => item.status === 'success')
+                .sort((a, b) => b.id - a.id)
+            const error = urlStore.urls
+                .filter((item) => item.status === 'error')
+                .sort((a, b) => b.id - a.id)
+
+            return { pending, success, error }
+        })
+
+        return { sortedUrls }
     },
 })
 </script>
 
 <style scoped>
-p {
-  color: black;
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.5s, transform 0.5s;
+}
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+    transform: translateY(-10px);
 }
 
 .url-list {
@@ -58,15 +95,5 @@ p {
 
 .url-list li.error {
     background-color: #f8d7da;
-}
-
-.meta-tags {
-    margin-top: 10px;
-    padding-left: 20px;
-    list-style: disc;
-}
-
-.meta-tags li {
-    margin-bottom: 5px;
 }
 </style>

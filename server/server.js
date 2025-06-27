@@ -58,8 +58,8 @@ app.post('/api/extract-head', async (req, res) => {
 const queue = new PQueue({ concurrency: 5 })
 app.post('/api/extract-head-batch', async (req, res) => {
     const { urls } = req.body
-
-    if (!Array.isArray(urls) || urls.some((url) => !isValidUrl(url))) {
+    console.log(req.body)
+    if (!Array.isArray(urls) || urls.some((urlItem) => !isValidUrl(urlItem.url))) {
         return res.status(400).json({ error: 'Danh sách URL không hợp lệ' })
     }
 
@@ -68,20 +68,20 @@ app.post('/api/extract-head-batch', async (req, res) => {
 
     try {
         await Promise.all(
-            urls.map((url, index) =>
+            urls.map((item, index) =>
                 queue.add(async () => {
                     console.log(
-                        `Đang xử lý URL ${index + 1}/${urls.length}: ${url} bắt đầu lúc ${new Date().toLocaleTimeString()}`,
+                        `Đang xử lý URL ${index + 1}/${urls.length}: ${item.url} bắt đầu lúc ${new Date().toLocaleTimeString()}`,
                     )
 
                     try {
-                        const headInfo = await fetchHeadInfo(url, browser)
-                        results.push({ url, status: 'success', data: headInfo, error: null })
+                        const headInfo = await fetchHeadInfo(item.url, browser)
+                        results.push({ id: item.id, url: item.url, status: 'success', data: headInfo, error: null })
                     } catch (error) {
-                        results.push({ url, status: 'error', data: null, error: error.message })
+                        results.push({ id: item.id, url: item.url, status: 'error', data: null, error: error.message })
                     }
                     console.log(
-                        `Đã xử lý URL ${index + 1}/${urls.length}: ${url} và hoàn thành lúc ${new Date().toLocaleTimeString()}`,
+                        `Đã xử lý URL ${index + 1}/${urls.length}: ${item.url} và hoàn thành lúc ${new Date().toLocaleTimeString()}`,
                     )
 
                     if (results.length % 5 === 0) {

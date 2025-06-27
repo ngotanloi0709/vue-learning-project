@@ -26,7 +26,7 @@ export const useUrlStore = defineStore('urlStore', {
                 })
             }
         },
-        async fetchMultipleUrls(urls: string[]) {
+        async fetchMultipleUrls(urls: {id: number, url: string}[]) {
             try {
                 const response = await fetch('http://localhost:3000/api/extract-head-batch', {
                     method: 'POST',
@@ -47,7 +47,7 @@ export const useUrlStore = defineStore('urlStore', {
                         const batchResults = JSON.parse(chunk.trim())
 
                         batchResults.forEach((result: UrlItem) => {
-                            const index = this.urls.findIndex((item) => item.url === result.url)
+                            const index = this.urls.findIndex((item) => item.id === result.id)
                             if (index !== -1) {
                                 this.updateUrlItem(index, {
                                     status: result.status,
@@ -69,7 +69,7 @@ export const useUrlStore = defineStore('urlStore', {
             }
         },
         addUrl(url: string) {
-            const id = Date.now()
+            const id = Date.now() + Math.random()
             this.urls.push({
                 id: id,
                 url: url,
@@ -85,11 +85,14 @@ export const useUrlStore = defineStore('urlStore', {
             this.fetchUrlHead(url, id)
         },
         pushMultipleUrls(urls: string[]) {
+            const fetchInput: { id: number, url: string}[] = []
+
             urls.forEach((url) => {
-                this.addUrl(url)
+                const urlId = this.addUrl(url)
+                fetchInput.push({ id: urlId, url: url })
             })
 
-            this.fetchMultipleUrls(urls)
+            this.fetchMultipleUrls(fetchInput)
         },
     },
 })
