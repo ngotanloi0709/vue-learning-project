@@ -44,15 +44,9 @@ export default defineComponent({
         const urlStore = useUrlStore()
 
         const sortedUrls = computed(() => {
-            const pending = urlStore.urls
-                .filter((item) => item.status === 'pending')
-                .sort((a, b) => b.id - a.id)
-            const success = urlStore.urls
-                .filter((item) => item.status === 'success')
-                .sort((a, b) => b.id - a.id)
-            const error = urlStore.urls
-                .filter((item) => item.status === 'error')
-                .sort((a, b) => b.id - a.id)
+            const pending = urlStore.urls.filter((item) => item.status === 'pending').sort((a, b) => b.id - a.id)
+            const success = urlStore.urls.filter((item) => item.status === 'success').sort((a, b) => b.id - a.id)
+            const error = urlStore.urls.filter((item) => item.status === 'error').sort((a, b) => b.id - a.id)
 
             return { pending, success, error }
         })
@@ -65,7 +59,9 @@ export default defineComponent({
 <style scoped>
 .fade-enter-active,
 .fade-leave-active {
-    transition: opacity 0.5s, transform 0.5s;
+    transition:
+        opacity 0.5s,
+        transform 0.5s;
 }
 .fade-enter-from,
 .fade-leave-to {

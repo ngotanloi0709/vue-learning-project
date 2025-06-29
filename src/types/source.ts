@@ -1,4 +1,4 @@
-import type { Article } from "./article"
+import type { Article } from './article'
 
 export type Source = {
     url: string

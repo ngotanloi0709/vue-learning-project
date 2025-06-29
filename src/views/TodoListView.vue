@@ -5,13 +5,7 @@
             <v-card-text>
                 <transition-group name="fade" tag="v-list">
                     <TodoInput @add="addTodo" />
-                    <TodoItem
-                        v-for="todo in sortedTodos"
-                        :key="todo.id"
-                        :todo="todo"
-                        @toggle="toggleTodo"
-                        @delete="deleteTodo"
-                    />
+                    <TodoItem v-for="todo in sortedTodos" :key="todo.id" :todo="todo" @toggle="toggleTodo" @delete="deleteTodo" />
                 </transition-group>
             </v-card-text>
         </v-card>

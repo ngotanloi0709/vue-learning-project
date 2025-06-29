@@ -12,9 +12,7 @@
                                 <v-list-item v-for="article in source.articles" :key="article.url">
                                     <v-list-item-content>
                                         <v-list-item-title>
-                                            <a :href="article.url" target="_blank">{{
-                                                article.title
-                                            }}</a>
+                                            <a :href="article.url" target="_blank">{{ article.title }}</a>
                                         </v-list-item-title>
                                     </v-list-item-content>
                                 </v-list-item>
