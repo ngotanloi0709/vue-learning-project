@@ -15,8 +15,17 @@
                 <h3>Success</h3>
                 <transition-group name="fade" tag="ul" class="url-list">
                     <li v-for="item in sortedUrls.success" :key="item.id" class="success">
-                        <p><strong>URL:</strong> {{ item.url }}</p>
+                        <p style="word-break: break-all"><strong>URL:</strong> {{ item.url }}</p>
                         <p><strong>Title:</strong> {{ item.data?.title || 'Không có title' }}</p>
+                        <div v-if="item.data?.redirectHistory && item.data.redirectHistory.length">
+                            <strong>Redirects:</strong>
+                            <ol style="padding-left: 20px">
+                                <li v-for="(url, idx) in item.data.redirectHistory.slice(0, 3)" :key="idx" style="word-break: break-all">
+                                    {{ url.length > 60 ? url.slice(0, 30) + '...' + url.slice(-20) : url }}
+                                </li>
+                                <li v-if="item.data.redirectHistory.length > 3">...</li>
+                            </ol>
+                        </div>
                     </li>
                 </transition-group>
             </v-col>
