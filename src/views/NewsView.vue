@@ -1,7 +1,11 @@
 <template>
     <v-container class="news-list">
         <v-card>
-            <v-card-title>VnExpress News</v-card-title>
+            <v-card-title
+                >VnExpress News
+                <v-spacer />
+                <v-btn color="primary" @click="reloadNews">Load lại dữ liệu</v-btn>
+            </v-card-title>
             <v-card-text>
                 <v-progress-linear v-if="newsStore.loading" indeterminate color="primary" />
                 <v-list v-else>
@@ -28,10 +32,16 @@ export default defineComponent({
         const newsStore = useNewsStore()
 
         onMounted(() => {
-            newsStore.fetchNews()
+            if (newsStore.articles.length === 0) {
+                newsStore.fetchNews()
+            }
         })
 
-        return { newsStore }
+        const reloadNews = () => {
+            newsStore.fetchNews()
+        }
+
+        return { newsStore, reloadNews }
     },
 })
 </script>

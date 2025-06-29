@@ -11,16 +11,17 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
+import { useTodoStore } from '@/stores/todo'
 
 export default defineComponent({
     name: 'TodoInput',
-    emits: ['add'],
-    setup(_, { emit }) {
+    setup() {
         const newTodo = ref('')
+        const todoStore = useTodoStore()
 
         const addTodo = () => {
             if (newTodo.value.trim()) {
-                emit('add', newTodo.value.trim())
+                todoStore.addTodo(newTodo.value.trim())
                 newTodo.value = ''
             }
         }

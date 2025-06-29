@@ -1,7 +1,11 @@
 <template>
     <v-container class="news-list">
         <v-card>
-            <v-card-title>Multiple News Sources</v-card-title>
+            <v-card-title
+                >Multiple News Sources
+                <v-spacer />
+                <v-btn color="primary" @click="reloadSources">Load lại dữ liệu</v-btn>
+            </v-card-title>
             <v-card-text>
                 <v-progress-linear v-if="sources.loading" indeterminate color="primary" />
                 <v-expansion-panels v-else>
@@ -34,8 +38,14 @@ export default defineComponent({
     setup() {
         const sources = useMultipleNewsStore()
 
-        onMounted(async () => {
+        const reloadSources = () => {
             sources.fetchSources()
+        }
+
+        onMounted(() => {
+            if (sources.sources.length === 0) {
+                sources.fetchSources()
+            }
         })
 
         const getDomainName = (url: string) => {
@@ -46,7 +56,7 @@ export default defineComponent({
             }
         }
 
-        return { sources, getDomainName }
+        return { sources, getDomainName, reloadSources }
     },
 })
 </script>

@@ -17,7 +17,9 @@ import { RouterView } from 'vue-router'
             <v-container fluid>
                 <v-row class="justify-center">
                     <v-col cols="12" md="8">
-                        <RouterView />
+                        <keep-alive>
+                            <RouterView />
+                        </keep-alive>
                     </v-col>
                 </v-row>
             </v-container>

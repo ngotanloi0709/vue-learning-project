@@ -3,8 +3,8 @@
         <v-list-item-title class="d-flex align-center justify-space-between">
             <span :class="{ completed: todo.completed }">{{ todo.text }}</span>
             <div>
-                <v-btn :disabled="todo.completed" size="small" icon color="success" @click="$emit('toggle', todo.id)">✔</v-btn>
-                <v-btn size="small" icon color="error" @click="$emit('delete', todo.id)">✖</v-btn>
+                <v-btn :disabled="todo.completed" size="small" icon color="success" @click="toggleTodo(todo.id)"> ✔ </v-btn>
+                <v-btn size="small" icon color="error" @click="deleteTodo(todo.id)">✖</v-btn>
             </div>
         </v-list-item-title>
     </v-list-item>
@@ -13,15 +13,28 @@
 <script lang="ts">
 import type { Todo } from '@/types/todo'
 import { defineComponent, type PropType } from 'vue'
+import { useTodoStore } from '@/stores/todo'
 
 export default defineComponent({
     name: 'TodoItem',
-    emits: ['toggle', 'delete'],
     props: {
         todo: {
             type: Object as PropType<Todo>,
             required: true,
         },
+    },
+    setup() {
+        const todoStore = useTodoStore()
+
+        const toggleTodo = (id: number) => {
+            todoStore.toggleTodo(id)
+        }
+
+        const deleteTodo = (id: number) => {
+            todoStore.deleteTodo(id)
+        }
+
+        return { toggleTodo, deleteTodo }
     },
 })
 </script>
