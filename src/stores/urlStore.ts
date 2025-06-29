@@ -26,7 +26,7 @@ export const useUrlStore = defineStore('urlStore', {
                 })
             }
         },
-        async fetchMultipleUrls(urls: {id: number, url: string}[]) {
+        async fetchMultipleUrls(urls: { id: number; url: string }[]) {
             try {
                 const response = await fetch('http://localhost:3000/api/extract-head-batch', {
                     method: 'POST',
@@ -58,7 +58,6 @@ export const useUrlStore = defineStore('urlStore', {
                         })
                     }
                 }
-
             } catch (error) {
                 console.error('Lỗi khi xử lý danh sách URL:', error)
             }
@@ -85,7 +84,7 @@ export const useUrlStore = defineStore('urlStore', {
             this.fetchUrlHead(url, id)
         },
         pushMultipleUrls(urls: string[]) {
-            const fetchInput: { id: number, url: string}[] = []
+            const fetchInput: { id: number; url: string }[] = []
 
             urls.forEach((url) => {
                 const urlId = this.addUrl(url)

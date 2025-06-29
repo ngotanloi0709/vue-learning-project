@@ -3,7 +3,7 @@ import { launchBrowser, createOptimizedPage, fetchArticlesFromPage } from '../se
 export default async function handler(req, res) {
     try {
         const browser = await launchBrowser(true)
-        const page = await createOptimizedPage(browser)
+        const page = await createOptimizedPage()
         const articles = await fetchArticlesFromPage(page, 'https://vnexpress.net/', '.title-news a')
 
         await browser.close()

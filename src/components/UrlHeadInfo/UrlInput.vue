@@ -5,13 +5,7 @@
             <v-btn @click="submitUrl" color="blue-lighten-3">Submit</v-btn>
             <v-btn class="ms-1" @click="submitCsv" color="grey-lighten-1">
                 <label for="csv-upload">Upload CSV</label>
-                <input
-                    id="csv-upload"
-                    type="file"
-                    accept=".csv"
-                    @change="submitCsv"
-                    style="display: none"
-                />
+                <input id="csv-upload" type="file" accept=".csv" @change="submitCsv" style="display: none" />
             </v-btn>
         </div>
     </div>
