@@ -22,7 +22,7 @@ export class HeadInfoService {
                 }
             })
 
-            await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 20000 })
+            await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 8000 })
 
             const headInfo = await page.evaluate(() => {
                 const title = document.querySelector('head title')?.innerText || null

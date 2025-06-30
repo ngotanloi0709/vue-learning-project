@@ -11,6 +11,7 @@ import { RouterView } from 'vue-router'
             <v-btn text to="/news" tag="router-link">News</v-btn>
             <v-btn text to="/multiple-news" tag="router-link">Multiple News</v-btn>
             <v-btn text to="/head-info" tag="router-link">Head Info</v-btn>
+            <v-btn text to="/tag-extract" tag="router-link">Tag Extract</v-btn>
         </v-app-bar>
 
         <v-main>

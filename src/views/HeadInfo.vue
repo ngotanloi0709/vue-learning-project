@@ -1,7 +1,11 @@
 <template>
     <div>
-        <UrlInput />
-        <UrlList />
+        <v-card>
+            <UrlInput />
+            <v-card-text>
+                <UrlList />
+            </v-card-text>
+        </v-card>
     </div>
 </template>
 

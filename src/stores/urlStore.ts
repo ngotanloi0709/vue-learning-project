@@ -5,6 +5,8 @@ import type { UrlItem } from '@/types/urlItem'
 export const useUrlStore = defineStore('urlStore', {
     state: () => ({
         urls: [] as UrlItem[],
+        pendingStartTime: 0,
+        pendingEndTime: 0,
     }),
     actions: {
         async fetchUrlHead(url: string, id: number) {
@@ -24,6 +26,8 @@ export const useUrlStore = defineStore('urlStore', {
                     data: null,
                     error: error?.response?.data?.error || 'Lỗi không xác định',
                 })
+            } finally {
+                this.checkPendingList()
             }
         },
         async fetchMultipleUrls(urls: { id: number; url: string }[]) {
@@ -60,6 +64,8 @@ export const useUrlStore = defineStore('urlStore', {
                 }
             } catch (error) {
                 console.error('Lỗi khi xử lý danh sách URL:', error)
+            } finally {
+                this.checkPendingList()
             }
         },
         updateUrlItem(index: number, updates: Partial<UrlItem>) {
@@ -77,6 +83,10 @@ export const useUrlStore = defineStore('urlStore', {
                 error: null,
             })
 
+            if (this.urls.filter((item) => item.status === 'pending').length === 1) {
+                this.pendingStartTime = performance.now()
+            }
+
             return id
         },
         pushSingleUrl(url: string) {
@@ -92,6 +102,13 @@ export const useUrlStore = defineStore('urlStore', {
             })
 
             this.fetchMultipleUrls(fetchInput)
+        },
+        checkPendingList() {
+            if (this.urls.filter((item) => item.status === 'pending').length === 0) {
+                this.pendingEndTime = performance.now()
+                const duration = (this.pendingEndTime - this.pendingStartTime).toFixed(2)
+                console.log(`Thời gian xử lý: ${duration} ms`)
+            }
         },
     },
 })

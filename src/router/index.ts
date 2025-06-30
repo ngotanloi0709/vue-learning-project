@@ -3,6 +3,7 @@ import TodoListView from '../views/TodoListView.vue'
 import NewsView from '../views/NewsView.vue'
 import MultipleNewsView from '../views/MultipleNewsView.vue'
 import HeadInfo from '../views/HeadInfo.vue'
+import TagExtract from '../views/TagExtract.vue'
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +27,11 @@ const router = createRouter({
             path: '/head-info',
             name: 'head-info',
             component: HeadInfo,
+        },
+        {
+            path: '/tag-extract',
+            name: 'tag-extract',
+            component: TagExtract,
         },
     ],
 })
