@@ -4,7 +4,7 @@ import type { UrlItem } from '@/types/urlItem'
 
 export const useUrlStore = defineStore('urlStore', {
     state: () => ({
-        urls: [] as UrlItem[],
+        urls: JSON.parse(localStorage.getItem('urlStore:urls') || '[]') as UrlItem[],
         pendingStartTime: 0,
         pendingEndTime: 0,
     }),
@@ -71,6 +71,7 @@ export const useUrlStore = defineStore('urlStore', {
         updateUrlItem(index: number, updates: Partial<UrlItem>) {
             if (index !== -1) {
                 this.urls[index] = { ...this.urls[index], ...updates }
+                this.saveToLocalStorage()
             }
         },
         addUrl(url: string) {
@@ -87,6 +88,7 @@ export const useUrlStore = defineStore('urlStore', {
                 this.pendingStartTime = performance.now()
             }
 
+            this.saveToLocalStorage()
             return id
         },
         pushSingleUrl(url: string) {
@@ -109,6 +111,9 @@ export const useUrlStore = defineStore('urlStore', {
                 const duration = (this.pendingEndTime - this.pendingStartTime).toFixed(2)
                 console.log(`Thời gian xử lý: ${duration} ms`)
             }
+        },
+        saveToLocalStorage() {
+            localStorage.setItem('urlStore:urls', JSON.stringify(this.urls))
         },
     },
 })

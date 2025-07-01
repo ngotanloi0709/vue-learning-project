@@ -4,7 +4,7 @@ import { defineStore } from 'pinia'
 
 export const useMultipleNewsStore = defineStore('multipleNews', {
     state: () => ({
-        sources: [] as Source[],
+        sources: JSON.parse(localStorage.getItem('multipleNewsStore:sources') || '[]') as Source[],
         loading: false,
     }),
     actions: {
@@ -14,11 +14,15 @@ export const useMultipleNewsStore = defineStore('multipleNews', {
             try {
                 const response = await axios.get('http://localhost:3000/api/multiple-news')
                 this.sources = response.data
+                this.saveToLocalStorage()
             } catch (error) {
                 console.error('Lỗi:', error)
             } finally {
                 this.loading = false
             }
+        },
+        saveToLocalStorage() {
+            localStorage.setItem('multipleNewsStore:sources', JSON.stringify(this.sources))
         },
     },
 })

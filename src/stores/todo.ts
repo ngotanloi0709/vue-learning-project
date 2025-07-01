@@ -3,10 +3,7 @@ import type { Todo } from '@/types/todo'
 
 export const useTodoStore = defineStore('todo', {
     state: () => ({
-        todos: [
-            { id: 1, text: 'Learn Vue', completed: false },
-            { id: 2, text: 'Build a Todo App', completed: false },
-        ] as Todo[],
+        todos: JSON.parse(localStorage.getItem('todoStore:todos') || '[]') as Todo[],
     }),
     actions: {
         addTodo(text: string) {
@@ -15,16 +12,24 @@ export const useTodoStore = defineStore('todo', {
                 text,
                 completed: false,
             })
+            this.saveToLocalStorage()
         },
         toggleTodo(id: number) {
             const todo = this.todos.find((t) => t.id === id)
             if (todo) {
                 todo.completed = !todo.completed
+                this.saveToLocalStorage()
             }
         },
         deleteTodo(id: number) {
             const index = this.todos.findIndex((t) => t.id === id)
-            if (index !== -1) this.todos.splice(index, 1)
+            if (index !== -1) {
+                this.todos.splice(index, 1)
+                this.saveToLocalStorage()
+            }
+        },
+        saveToLocalStorage() {
+            localStorage.setItem('todoStore:todos', JSON.stringify(this.todos))
         },
     },
     getters: {
