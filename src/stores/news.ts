@@ -4,7 +4,8 @@ import axios from 'axios'
 
 export const useNewsStore = defineStore('news', {
     state: () => ({
-        articles: JSON.parse(localStorage.getItem('newsStore:articles') || '[]') as Article[],
+        articles: JSON.parse(sessionStorage.getItem('newsStore:articles') || '[]') as Article[],
+        // articles: JSON.parse(localStorage.getItem('newsStore:articles') || '[]') as Article[],
         loading: false,
     }),
     actions: {
@@ -23,7 +24,8 @@ export const useNewsStore = defineStore('news', {
             }
         },
         saveToLocalStorage() {
-            localStorage.setItem('newsStore:articles', JSON.stringify(this.articles))
+            sessionStorage.setItem('newsStore:articles', JSON.stringify(this.articles))
+            // localStorage.setItem('newsStore:articles', JSON.stringify(this.articles))
         },
     },
 })

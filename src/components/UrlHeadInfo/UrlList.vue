@@ -46,7 +46,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue'
+import { defineComponent, computed, onMounted } from 'vue'
 import { useUrlStore } from '@/stores/urlStore'
 
 export default defineComponent({
@@ -60,6 +60,10 @@ export default defineComponent({
             const error = urlStore.urls.filter((item) => item.status === 'error').sort((a, b) => b.id - a.id)
 
             return { pending, success, error }
+        })
+
+        onMounted(() => {
+            urlStore.resumePendingUrls()
         })
 
         return { sortedUrls }

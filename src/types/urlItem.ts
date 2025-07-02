@@ -6,6 +6,7 @@ export type UrlItem = {
         title: string | null
         metaTags: { name: string | null; content: string | null }[]
         links: { rel: string | null; href: string | null }[]
+        redirectHistory?: string[]
     }
     error: string | null
 }

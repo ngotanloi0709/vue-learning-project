@@ -98,7 +98,7 @@ export default defineComponent({
                     .map((line) => line.trim())
                     .filter((line) => line)
 
-                const batchSize = 10
+                const batchSize = 5
                 const batches = []
                 for (let i = 0; i < urls.length; i += batchSize) {
                     batches.push(urls.slice(i, i + batchSize))

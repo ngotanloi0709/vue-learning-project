@@ -4,7 +4,8 @@ import type { ATag } from '@/types/aTag'
 
 export const useTagStore = defineStore('tagStore', {
     state: () => ({
-        tags: JSON.parse(localStorage.getItem('tagStore:tags') || '[]') as ATag[], // Khôi phục trạng thái từ localStorage
+        tags: JSON.parse(sessionStorage.getItem('tagStore:tags') || '[]') as ATag[], // Khôi phục trạng thái từ sessionStorage
+        // tags: JSON.parse(localStorage.getItem('tagStore:tags') || '[]') as ATag[], // Khôi phục trạng thái từ localStorage
         loading: false,
     }),
     actions: {
@@ -15,7 +16,7 @@ export const useTagStore = defineStore('tagStore', {
                 const response = await axios.post('http://localhost:3000/api/get-all-a-tag', { url })
 
                 this.tags = response.data
-                this.saveToLocalStorage() // Lưu trạng thái vào localStorage
+                this.saveToLocalStorage() // Lưu trạng thái vào sessionStorage
             } catch (error) {
                 console.error('Lỗi:', error)
             } finally {
@@ -23,7 +24,8 @@ export const useTagStore = defineStore('tagStore', {
             }
         },
         saveToLocalStorage() {
-            localStorage.setItem('tagStore:tags', JSON.stringify(this.tags)) // Lưu trạng thái vào localStorage
+            sessionStorage.setItem('tagStore:tags', JSON.stringify(this.tags)) // Lưu trạng thái vào sessionStorage
+            // localStorage.setItem('tagStore:tags', JSON.stringify(this.tags)) // Lưu trạng thái vào localStorage
         },
     },
 })

@@ -3,7 +3,8 @@ import type { Todo } from '@/types/todo'
 
 export const useTodoStore = defineStore('todo', {
     state: () => ({
-        todos: JSON.parse(localStorage.getItem('todoStore:todos') || '[]') as Todo[],
+        todos: JSON.parse(sessionStorage.getItem('todoStore:todos') || '[]') as Todo[],
+        // todos: JSON.parse(localStorage.getItem('todoStore:todos') || '[]') as Todo[],
     }),
     actions: {
         addTodo(text: string) {
@@ -29,7 +30,8 @@ export const useTodoStore = defineStore('todo', {
             }
         },
         saveToLocalStorage() {
-            localStorage.setItem('todoStore:todos', JSON.stringify(this.todos))
+            sessionStorage.setItem('todoStore:todos', JSON.stringify(this.todos))
+            // localStorage.setItem('todoStore:todos', JSON.stringify(this.todos))
         },
     },
     getters: {

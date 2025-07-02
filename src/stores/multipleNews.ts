@@ -4,7 +4,8 @@ import { defineStore } from 'pinia'
 
 export const useMultipleNewsStore = defineStore('multipleNews', {
     state: () => ({
-        sources: JSON.parse(localStorage.getItem('multipleNewsStore:sources') || '[]') as Source[],
+        sources: JSON.parse(sessionStorage.getItem('multipleNewsStore:sources') || '[]') as Source[],
+        // sources: JSON.parse(localStorage.getItem('multipleNewsStore:sources') || '[]') as Source[],
         loading: false,
     }),
     actions: {
@@ -22,7 +23,8 @@ export const useMultipleNewsStore = defineStore('multipleNews', {
             }
         },
         saveToLocalStorage() {
-            localStorage.setItem('multipleNewsStore:sources', JSON.stringify(this.sources))
+            sessionStorage.setItem('multipleNewsStore:sources', JSON.stringify(this.sources))
+            // localStorage.setItem('multipleNewsStore:sources', JSON.stringify(this.sources))
         },
     },
 })

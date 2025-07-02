@@ -4,7 +4,8 @@ import type { UrlItem } from '@/types/urlItem'
 
 export const useUrlStore = defineStore('urlStore', {
     state: () => ({
-        urls: JSON.parse(localStorage.getItem('urlStore:urls') || '[]') as UrlItem[],
+        urls: JSON.parse(sessionStorage.getItem('urlStore:urls') || '[]') as UrlItem[],
+        // urls: JSON.parse(localStorage.getItem('urlStore:urls') || '[]') as UrlItem[],
         pendingStartTime: 0,
         pendingEndTime: 0,
     }),
@@ -21,10 +22,14 @@ export const useUrlStore = defineStore('urlStore', {
                     error: null,
                 })
             } catch (error) {
+                let errorMsg = 'Lỗi không xác định'
+                if (axios.isAxiosError(error) && error.response?.data?.error) {
+                    errorMsg = error.response.data.error
+                }
                 this.updateUrlItem(index, {
                     status: 'error',
                     data: null,
-                    error: error?.response?.data?.error || 'Lỗi không xác định',
+                    error: errorMsg,
                 })
             } finally {
                 this.checkPendingList()
@@ -38,6 +43,7 @@ export const useUrlStore = defineStore('urlStore', {
                     body: JSON.stringify({ urls }),
                 })
 
+                if (!response.body) throw new Error('No response body')
                 const reader = response.body.getReader()
                 const decoder = new TextDecoder('utf-8')
 
@@ -113,7 +119,15 @@ export const useUrlStore = defineStore('urlStore', {
             }
         },
         saveToLocalStorage() {
-            localStorage.setItem('urlStore:urls', JSON.stringify(this.urls))
+            sessionStorage.setItem('urlStore:urls', JSON.stringify(this.urls))
+            // localStorage.setItem('urlStore:urls', JSON.stringify(this.urls))
+        },
+        resumePendingUrls() {
+            this.urls.forEach((item) => {
+                if (item.status === 'pending') {
+                    this.fetchUrlHead(item.url, item.id)
+                }
+            })
         },
     },
 })
